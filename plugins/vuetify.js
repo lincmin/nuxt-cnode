@@ -9,7 +9,7 @@ import {
   VBtn,
   VIcon,
   VGrid,
-  VToolbar
+  VTabs
 } from 'vuetify'
 
 Vue.use(Vuetify, {
@@ -22,6 +22,6 @@ Vue.use(Vuetify, {
     VBtn,
     VIcon,
     VGrid,
-    VToolbar
+    VTabs
   }
 })
