@@ -9,7 +9,8 @@ import {
   VBtn,
   VIcon,
   VGrid,
-  VTabs
+  VTabs,
+  VDivider
 } from 'vuetify'
 
 Vue.use(Vuetify, {
@@ -22,6 +23,7 @@ Vue.use(Vuetify, {
     VBtn,
     VIcon,
     VGrid,
-    VTabs
+    VTabs,
+    VDivider
   }
 })
