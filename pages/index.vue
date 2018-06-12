@@ -46,7 +46,7 @@
                 </v-list-tile-sub-title>
               </v-list-tile-content>
               <v-list-tile-action>
-                <v-list-tile-action-text>{{ item.last_reply_at }}</v-list-tile-action-text>
+                <v-list-tile-action-text>{{item.last_reply_at_human}}</v-list-tile-action-text>
                 <v-icon v-if="item.good"
                         color="red lighten-1">thumb_up_alt</v-icon>
                 <v-icon v-else-if="item.top"
@@ -66,6 +66,8 @@
 
 <script>
 import axios from 'axios'
+import moment from 'moment'
+moment.locale('zh-cn')
 
 export default {
   layout: 'simple',
@@ -76,14 +78,25 @@ export default {
   },
   async asyncData ({ app }) {
     let { data } = await axios.get(`https://cnodejs.org/api/v1/topics`)
-    return { datas: data.data }
+    let lists = data.data
+    lists.map((item, i) => {
+      item.last_reply_at_human = moment(item.last_reply_at).fromNow()
+    })
+    return { datas: lists }
   },
   methods: {
     getTopicsData (params) {
       return axios.get(`https://cnodejs.org/api/v1/topics`, { params: { ...params } }).then(res => {
-        this.datas = res.data.data
+        let lists = res.data.data
+        this.datas = this.formatHumanDate(lists)
       })
         .catch(error => console.log(error))
+    },
+    formatHumanDate (datas) {
+      datas.map((item, i) => {
+        item.last_reply_at_human = moment(item.last_reply_at).fromNow()
+      })
+      return datas
     },
     changeTab (tabType, tabNum) {
       this.tabNum = tabNum
