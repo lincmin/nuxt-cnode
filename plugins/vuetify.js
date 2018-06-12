@@ -10,7 +10,8 @@ import {
   VIcon,
   VGrid,
   VTabs,
-  VDivider
+  VDivider,
+  VProgressCircular
 } from 'vuetify'
 
 Vue.use(Vuetify, {
@@ -24,6 +25,7 @@ Vue.use(Vuetify, {
     VIcon,
     VGrid,
     VTabs,
-    VDivider
+    VDivider,
+    VProgressCircular
   }
 })

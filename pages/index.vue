@@ -1,67 +1,75 @@
 <template>
-  <v-tabs icons-and-text
-          centered
-          dark
-          color="cyan">
-    <v-tabs-slider color="yellow"></v-tabs-slider>
-    <v-tab href="#tab-1"
-           @click="changeTab('all','1')">
-      全部
-      <v-icon>list_alt</v-icon>
-    </v-tab>
-    <v-tab href="#tab-2"
-           @click="changeTab('good','2')">
-      精华
-      <v-icon>favorite</v-icon>
-    </v-tab>
-    <v-tab href="#tab-3"
-           @click="changeTab('share','3')">
-      分享
-      <v-icon>share</v-icon>
-    </v-tab>
-    <v-tab href="#tab-4"
-           @click="changeTab('ask','4')">
-      问答
-      <v-icon>question_answer</v-icon>
-    </v-tab>
-    <v-tab href="#tab-5"
-           @click="changeTab('job','5')">
-      招聘
-      <v-icon>account_box</v-icon>
-    </v-tab>
-    <v-tab-item :id="`tab-${tabNum}`">
-      <v-card flat>
-        <v-list two-line>
-          <template v-for="(item, index) in datas">
-            <v-list-tile :key="item.title"
-                         avatar
-                         ripple
-                         @click="">
-              <v-list-tile-avatar>
-                <img :src="item.author.avatar_url">
-              </v-list-tile-avatar>
-              <v-list-tile-content>
-                <v-list-tile-title v-html="item.title"></v-list-tile-title>
-                <v-list-tile-sub-title v-html="`${item.reply_count}/${item.visit_count}`">
-                </v-list-tile-sub-title>
-              </v-list-tile-content>
-              <v-list-tile-action>
-                <v-list-tile-action-text>{{item.last_reply_at_human}}</v-list-tile-action-text>
-                <v-icon v-if="item.good"
-                        color="red lighten-1">thumb_up_alt</v-icon>
-                <v-icon v-else-if="item.top"
-                        color="yellow darken-2">vertical_align_top</v-icon>
-              </v-list-tile-action>
-            </v-list-tile>
-            <v-divider inset
-                       light
-                       v-if="index + 1 < datas.length"
-                       :key="index"></v-divider>
-          </template>
-        </v-list>
-      </v-card>
-    </v-tab-item>
-  </v-tabs>
+  <div>
+    <div class="loading">
+      <v-progress-circular indeterminate
+                           color="primary"
+                           v-show="loading">
+      </v-progress-circular>
+    </div>
+    <v-tabs icons-and-text
+            centered
+            dark
+            color="cyan">
+      <v-tabs-slider color="yellow"></v-tabs-slider>
+      <v-tab href="#tab-1"
+             @click="changeTab('all','1')">
+        全部
+        <v-icon>list_alt</v-icon>
+      </v-tab>
+      <v-tab href="#tab-2"
+             @click="changeTab('good','2')">
+        精华
+        <v-icon>favorite</v-icon>
+      </v-tab>
+      <v-tab href="#tab-3"
+             @click="changeTab('share','3')">
+        分享
+        <v-icon>share</v-icon>
+      </v-tab>
+      <v-tab href="#tab-4"
+             @click="changeTab('ask','4')">
+        问答
+        <v-icon>question_answer</v-icon>
+      </v-tab>
+      <v-tab href="#tab-5"
+             @click="changeTab('job','5')">
+        招聘
+        <v-icon>account_box</v-icon>
+      </v-tab>
+      <v-tab-item :id="`tab-${tabNum}`">
+        <v-card flat>
+          <v-list two-line>
+            <template v-for="(item, index) in datas">
+              <v-list-tile :key="item.title"
+                           avatar
+                           ripple
+                           @click="">
+                <v-list-tile-avatar>
+                  <img :src="item.author.avatar_url">
+                </v-list-tile-avatar>
+                <v-list-tile-content>
+                  <v-list-tile-title v-html="item.title"></v-list-tile-title>
+                  <v-list-tile-sub-title v-html="`${item.reply_count}/${item.visit_count}`">
+                  </v-list-tile-sub-title>
+                </v-list-tile-content>
+                <v-list-tile-action>
+                  <v-list-tile-action-text>{{item.last_reply_at_human}}</v-list-tile-action-text>
+                  <v-icon v-if="item.good"
+                          color="red lighten-1">thumb_up_alt</v-icon>
+                  <v-icon v-else-if="item.top"
+                          color="yellow darken-2">vertical_align_top</v-icon>
+                </v-list-tile-action>
+              </v-list-tile>
+              <v-divider inset
+                         light
+                         v-if="index + 1 < datas.length"
+                         :key="index"></v-divider>
+            </template>
+          </v-list>
+        </v-card>
+      </v-tab-item>
+    </v-tabs>
+  </div>
 </template>
 
 <script>
@@ -73,7 +81,8 @@ export default {
   layout: 'simple',
   data () {
     return {
-      tabNum: '1'
+      tabNum: '1',
+      loading: false
     }
   },
   async asyncData ({ app }) {
@@ -96,10 +105,12 @@ export default {
       datas.map((item, i) => {
         item.last_reply_at_human = moment(item.last_reply_at).fromNow()
       })
+      this.loading = false
       return datas
     },
     changeTab (tabType, tabNum) {
       this.tabNum = tabNum
+      this.loading = true
       let params = {
         page: 1,
         tab: tabType, // all ask share job good
@@ -111,3 +122,18 @@ export default {
   }
 }
 </script>
+<style>
+.loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  position: absolute;
+}
+</style>
