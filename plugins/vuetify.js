@@ -13,7 +13,7 @@ import {
   VDivider,
   VProgressCircular
 } from 'vuetify'
-
+import Scroll from 'vuetify/es5/directives/scroll'
 Vue.use(Vuetify, {
   components: {
     VApp,
@@ -27,5 +27,8 @@ Vue.use(Vuetify, {
     VTabs,
     VDivider,
     VProgressCircular
+  },
+  directives: {
+    Scroll
   }
 })

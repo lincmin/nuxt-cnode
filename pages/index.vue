@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-scroll="onScroll">
     <div class="loading">
       <v-progress-circular indeterminate
                            color="primary"
@@ -82,11 +82,13 @@ export default {
   data () {
     return {
       tabNum: '1',
-      loading: false
+      tabType: 'all',
+      loading: false,
+      page: 1
     }
   },
   async asyncData ({ app }) {
-    let { data } = await axios.get(`https://cnodejs.org/api/v1/topics`)
+    let { data } = await axios.get(`https://cnodejs.org/api/v1/topics`, { params: { limit: 10 } })
     let lists = data.data
     lists.map((item, i) => {
       item.last_reply_at_human = moment(item.last_reply_at).fromNow()
@@ -94,10 +96,18 @@ export default {
     return { datas: lists }
   },
   methods: {
-    getTopicsData (params) {
+    getTopicsData (params, isAppend) {
+      this.loading = true
       return axios.get(`https://cnodejs.org/api/v1/topics`, { params: { ...params } }).then(res => {
+        let oldDatas = this.datas
         let lists = res.data.data
-        this.datas = this.formatHumanDate(lists)
+        let newDatas = this.formatHumanDate(lists)
+        if (isAppend) {
+          this.datas = oldDatas.concat(newDatas)
+        } else {
+          this.datas = newDatas
+        }
+        this.loading = false
       })
         .catch(error => console.log(error))
     },
@@ -105,19 +115,35 @@ export default {
       datas.map((item, i) => {
         item.last_reply_at_human = moment(item.last_reply_at).fromNow()
       })
-      this.loading = false
       return datas
     },
     changeTab (tabType, tabNum) {
       this.tabNum = tabNum
-      this.loading = true
+      this.tabType = tabType
+      this.page = 1
       let params = {
         page: 1,
         tab: tabType, // all ask share job good
         limit: 10,
         mdrender: 'true'
       }
-      this.getTopicsData(params)
+      this.getTopicsData(params, false)
+    },
+    onScroll (e) {
+      this.scrollTop = window.pageYOffset || document.documentElement.scrollTop
+      this.clientHeight = document.documentElement.clientHeight
+      this.scrollHeight = document.body.scrollHeight
+      if (this.scrollTop + this.clientHeight === this.scrollHeight) {
+        let page = this.page + 1
+        this.page = page
+        let params = {
+          page: page,
+          tab: this.tabType, // all ask share job good
+          limit: 10,
+          mdrender: 'true'
+        }
+        this.getTopicsData(params, true)
+      }
     }
   }
 }
@@ -134,6 +160,6 @@ export default {
   left: 0;
   right: 0;
   margin: auto;
-  position: absolute;
+  position: fixed;
 }
 </style>
